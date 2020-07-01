@@ -1,16 +1,14 @@
 # Ender-5-Marlin-1.1.x
 
-### UPDATE: 2.8.2020
-I'm no longer maintaining this repository because I've completely rebuild My ender 5 with BigTreeTech's SKR 1.3 with TMC2208 drivers. Marlin's latest firmware now included pre-made configuration for Ender 5 so you should use that as a starting point instead of mine. 
+Ender 5 config set for Marlin 1.1.x, with a BLTouch.
 
+Forked from firestrife23/ender-5-marlin, thanks to them !
 
-## Guide
-
-it's a drop in replacement files for Marlin's firmware https://github.com/MarlinFirmware/Marlin/archive/bugfix-1.1.x.zip
+## Features
 
 **It's recommended to run M503 & M500 before and after flashing firmware**
 
-## Features and Fixes
+## Features from firestrife23
 
 * Set machine name to Ender-5
 * Set Homing to rear right corner
@@ -24,16 +22,9 @@ it's a drop in replacement files for Marlin's firmware https://github.com/Marlin
 * Boosted Buffer for improved print quality with Octopi, almost as good as printing from SD Card
 * Enabled Unknown Z No Raise (No more horrible grinding sound at Max Position. However, disable this if you use Auto Bed Leveling)
 * Set print bed to 220x220 with the volume of 300 (you can change it to 235x235 however, keep in mind if you have custom hotend cooling or Auto Leveling sensors it'll crash into frame unless you reduced it to 220x220 or less)
-* Enabled Mesh Bed Leveling with 5x5 points (I'm old school, you can disable if don't want it)
-  ```
-  #define MESH_BED_LEVELING
-  #define GRID_MAX_POINTS_X 5
-  ```
+* ~Enabled Mesh Bed Leveling with 5x5 points (I'm old school, you can disable if don't want it)~
 * Enabled Restore Leveling Data after G28 (Very useful for mesh or auto leveling)
 * Enabled LCD Bed Leveling Menu
-
-Special Note about LCD stuffs below, I disabled a lot of those to reclaim memory space for above features and I do most of the configuration through octopi and turned my LCD into more of Progress Report with minimal basic stuff. Now that you know why some of the menu options are missing.
-
 * Enabled Slim LCD Menus (reclaim memory space)
 * Disabled LCD Info Menu (reclaim memory space)
 * Disabled Status Message Scrolling (reclaim memory space)
@@ -43,8 +34,12 @@ Special Note about LCD stuffs below, I disabled a lot of those to reclaim memory
     * [Detailed Progress](https://plugins.octoprint.org/plugins/detailedprogress/)
     * [PrintTimeGenius](https://plugins.octoprint.org/plugins/PrintTimeGenius/)
     * [OctoPrint-ProgressBasedOnTime](https://plugins.octoprint.org/plugins/ProgressBasedOnTime/)
+* Enabled BLTouch support
+* Set BLTouch offsets to Creality's backet
     
 ## Slicer G-Code
+
+TODO
 
 Start G-Code
 ```
@@ -72,12 +67,3 @@ M104 S0 ; turn off extruder
 M140 S0 ; turn off bed
 M84 ; disable motors
 ```
-
-
-## Future Plan
-
-Create different set of configuration.h for: 
-- [x] Mesh Leveling
-- [ ] ~~EZABL Leveling~~ **Please use [TH3D's firmware](https://www.th3dstudio.com/knowledgebase/th3d-unified-firmware-package/)**
-- [ ] ~~BLTouch Leveling~~ **Dropped, due to variation of BLtouch/3Dtouch Clones**
-- [ ] Create guide on how to edit your firmware for Bltouch/3Dtouch 
