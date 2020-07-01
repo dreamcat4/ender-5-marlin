@@ -3,39 +3,6 @@
 Ender 5 config set for Marlin 1.1.x, with a BLTouch.
 
 Forked from firestrife23/ender-5-marlin, thanks to them !
-
-## Features
-
-**It's recommended to run M503 & M500 before and after flashing firmware**
-
-## Features from firestrife23
-
-* Set machine name to Ender-5
-* Set Homing to rear right corner
-* Invert Z Stepper Direction
-* Disabled Bootscreen (reclaim memory space)
-* Disabled Status Screen Image (this remove "Ender-5" from the top left corner, for much cleaner status screen)
-* Enabled S-Curve Acceleration & Junction Deviation @ 0.08 for 0.04mm nozzle (You'll need to change the value if you're using different nozzle)
-* Linear Advance Supported. To make the use of Linear Advance, you will need to do the calibration, then add M900 K## to Slicer's Custom Starting G-Code.
-* Disabled Speaker
-* Disabled ARC Support (It's for laser etching, reclaim memory space)
-* Boosted Buffer for improved print quality with Octopi, almost as good as printing from SD Card
-* Enabled Unknown Z No Raise (No more horrible grinding sound at Max Position. However, disable this if you use Auto Bed Leveling)
-* Set print bed to 220x220 with the volume of 300 (you can change it to 235x235 however, keep in mind if you have custom hotend cooling or Auto Leveling sensors it'll crash into frame unless you reduced it to 220x220 or less)
-* ~Enabled Mesh Bed Leveling with 5x5 points (I'm old school, you can disable if don't want it)~
-* Enabled Restore Leveling Data after G28 (Very useful for mesh or auto leveling)
-* Enabled LCD Bed Leveling Menu
-* Enabled Slim LCD Menus (reclaim memory space)
-* Disabled LCD Info Menu (reclaim memory space)
-* Disabled Status Message Scrolling (reclaim memory space)
-* Disabled Long Filename Scrolling (reclaim memory space)
-* Enabled Set LCD progress manually (useful for Octoprint's plugin)
-  * You'll need the following OctoPrint plugins for more accurate progress bar:
-    * [Detailed Progress](https://plugins.octoprint.org/plugins/detailedprogress/)
-    * [PrintTimeGenius](https://plugins.octoprint.org/plugins/PrintTimeGenius/)
-    * [OctoPrint-ProgressBasedOnTime](https://plugins.octoprint.org/plugins/ProgressBasedOnTime/)
-* Enabled BLTouch support
-* Set BLTouch offsets to Creality's backet
     
 ## Slicer G-Code
 
@@ -43,27 +10,46 @@ TODO
 
 Start G-Code
 ```
-G28 ; home all axes
-M117 Purge extruder
-G92 E0 ; reset extruder
-G1 Z1.0 F3000 ; move z up little to prevent scratching of surface
-G1 X5.0 Y20 Z0.3 F5000.0 ; move to start-line position adjusted to not hit clips
-G1 X5.0 Y220.0 Z0.3 F1500.0 E15 ; draw 1st line
-G1 X5.4 Y220.0 Z0.3 F5000.0 ; move to side a little
-G1 X5.4 Y20 Z0.3 F1500.0 E30 ; draw 2nd line
-G92 E0 ; reset extruder
-G1 Z1.0 F3000 ; move z up little to prevent scratching of surface
+; {material_print_temperature} {material_bed_temperature}
+
+M201 X500.00 Y500.00 Z100.00 E5000.00 ;Setup machine max acceleration
+M203 X500.00 Y500.00 Z10.00 E50.00 ;Setup machine max feedrate
+M204 P500.00 R1000.00 T500.00 ;Setup Print/Retract/Travel acceleration
+M205 X8.00 Y8.00 Z0.40 E5.00 ;Setup Jerk
+M220 S100 ;Reset Feedrate
+M221 S100 ;Reset Flowrate
+
+M104 S140 ; Pre-heat nozzle to 140 without waiting, avoid oozing
+M140 S{material_bed_temperature_layer_0} ; Set heatbed temp without waiting
+
+G28 ; Home all
+G29 ; Mesh bed levelling
+
+M109 S{material_print_temperature_layer_0} ; Wait for nozzle to reach target temp
+M190 S{material_bed_temperature_layer_0} ; Wait for heatbed to reach target temp
+
+G92 E0 ;Reset Extruder
+G1 Z2.0 F3000 ;Move Z Axis up
+G1 X10.1 Y20 Z0.28 F5000.0 ;Move to start position
+G1 X10.1 Y200.0 Z0.28 F1500.0 E15 ;Draw the first line
+G1 X10.4 Y200.0 Z0.28 F5000.0 ;Move to side a little
+G1 X10.4 Y20 Z0.28 F1500.0 E30 ;Draw the second line
+G92 E0 ;Reset Extruder
+G1 Z2.0 F3000 ;Move Z Axis up
 ```
 End G-Code
 ```
-G91; set coordinates to relative
-G1 F1800 E-3; retract
-G1 F3000 Z10; lift nozzle off the print 10mm
-G90; change to absolute
-G28 X0 Y0 ; homing XY
-G1 Z300; prepare for part removal by lowering bed to bottom.
-M106 S0 ; turn off cooling fan
-M104 S0 ; turn off extruder
-M140 S0 ; turn off bed
-M84 ; disable motors
+G91 ;Relative positioning
+G1 E-2 F2700 ;Retract a bit
+G1 E-2 Z0.2 F2400 ;Retract and raise Z
+G1 X5 Y5 F3000 ;Wipe out
+G1 Z10 ;Raise Z more
+G90 ;Absolute positionning
+
+G1 X0 Y0 ;Present print
+M106 S0 ;Turn-off fan
+M104 S0 ;Turn-off hotend
+M140 S0 ;Turn-off bed
+
+M84 X Y E ;Disable all steppers but Z
 ```
