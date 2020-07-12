@@ -12,11 +12,7 @@ M140 S{material_bed_temperature_layer_0} ; Set heatbed temp without waiting
 
 G28 ; Home all
 G29 ; Mesh bed levelling
-
 M420 S1 ; Enable bed levelling .... not sure it's required :p
-
-
-g1 f5000 x10 y10 z5 ; Move the nozzle back close to the origin to keep the oozing near the prime line
 
 M109 S{material_print_temperature_layer_0} ; Wait for nozzle to reach target temp
 M190 S{material_bed_temperature_layer_0} ; Wait for heatbed to reach target temp
